@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from typing import Optional
+from pydantic import BaseModel
+from fastapi import Header
 
 app = FastAPI()
 
@@ -30,3 +32,34 @@ async def greet_name(name: str, age:int) -> dict:
 @app.get('/greet')
 async def greet_name(  age: int, name: Optional[str] = 'User') -> dict:
     return {'message': f'Hello {name}! , with age {age}'}
+
+
+# Request Body
+# serializer/schema - validate the data
+
+class BookCreateModel(BaseModel):
+    title : str
+    auther :  str
+
+
+@app.post('/create_book')
+async def create_book(book_data: BookCreateModel):
+    return book_data
+
+# Reading and setting headers  
+
+@app.get('/get_headers', status_code=500)
+async def get_header(
+    accept: str =  Header(None),
+    content_type: str =  Header(None),
+    user_agent: str =  Header(None),
+    host: str =  Header(None),
+    ):
+
+    request_headers = {}
+    request_headers['Accept'] = accept
+    request_headers['Content_type'] = content_type
+    request_headers['User_Agent'] = user_agent
+    request_headers['Host'] = host
+
+    return request_headers
