@@ -19,3 +19,10 @@ pip freeze > requirements.txt
 uvicorn main:app --reload
 
 uvicorn filename:instance --reload
+
+pip install asyncpg 
+
+pip install sqlmodel
+
+pip install greenlet
+
