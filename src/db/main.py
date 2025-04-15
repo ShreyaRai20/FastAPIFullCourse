@@ -19,7 +19,7 @@ async def init_db():
         # statement = text("SELECT 'HELLO';")
         # result = await conn.execute(statement)
         # return statement
-        from src.books.models import Book
+        from src.books.models import Books
         await conn.run_sync(SQLModel.metadata.create_all)
 
 async def get_session() -> AsyncSession:

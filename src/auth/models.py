@@ -1,13 +1,11 @@
 from sqlmodel import SQLModel, Field, Column
 import sqlalchemy.dialects.postgresql as pg
-from datetime import datetime, date
-import pytz
 import uuid
+from datetime import datetime
+import pytz
 
-# sql model
-class Books(SQLModel, table=True):
-    __tablename__ = "books"
-
+class User(SQLModel, table=True):
+    __tablename__ = 'users'
     uid : uuid.UUID = Field(
         sa_column=Column(
             pg.UUID, 
@@ -15,15 +13,14 @@ class Books(SQLModel, table=True):
             primary_key=True, 
             default=uuid.uuid4
         ))# unique - pydantic fields function
-    title : str
-    author : str
-    publisher : str
-    published_date : date
-    page_count : int
-    language : str
+    username: str
+    email: str
+    firstname: str
+    lastname: str
+    is_verified: bool = Field(default=False)
+    password_hash: str = Field(exclude=True)
     created_at: datetime = Field(sa_column=Column(pg.TIMESTAMP(timezone=True),default=datetime.now(pytz.utc)))
     updated_at: datetime = Field(sa_column=Column(pg.TIMESTAMP(timezone=True),default=datetime.now(pytz.utc)))
-    
-    
+
     def __repr__(self):
-        return f'<Book {self.title}>'
+        return f'<User {self.username}>'
