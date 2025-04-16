@@ -8,7 +8,7 @@ import logging
 password_context = CryptContext(
     schemes=['bcrypt']
 )
-ACCESS_TOKEN_EXPIRY = 3600
+ACCESS_TOKEN_EXPIRY = 1
 
 def generate_password_hash(password: str) -> str:
     hash = password_context.hash(password)
@@ -20,7 +20,7 @@ def verify_password(password: str, hash: str) -> bool:
 def create_access_token(user_data: dict, expiry: timedelta = None, refresh: bool=False):
     payload = {}
     payload['user'] = user_data
-    payload['exp'] = datetime.now() + (expiry if expiry is not None else timedelta(seconds=ACCESS_TOKEN_EXPIRY))
+    payload['exp'] = datetime.now() + (expiry if expiry is not None else timedelta(hours=ACCESS_TOKEN_EXPIRY))
     payload['jti'] = str(uuid.uuid4())
     payload['refresh'] = refresh
     token = jwt.encode(
@@ -28,6 +28,8 @@ def create_access_token(user_data: dict, expiry: timedelta = None, refresh: bool
         key=Config.JWT_SECRET,
         algorithm=Config.JWT_ALGORITHM
     )
+    print(f"[DEBUG] Token expiry: {payload['exp']}")
+
     return token
 
 def decode_token(token: str) -> dict:
@@ -37,6 +39,7 @@ def decode_token(token: str) -> dict:
             key=Config.JWT_SECRET,
             algorithms=[Config.JWT_ALGORITHM]
         )
+        print(f"[DEBUG] Decoded token data: {token_data}")
         return token_data
     except jwt.PyJWTError as e:
         logging.exception(e)

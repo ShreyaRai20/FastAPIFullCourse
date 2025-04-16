@@ -7,12 +7,13 @@ from fastapi.exceptions import HTTPException
 from .utils import create_access_token, decode_token, verify_password
 from datetime import timedelta, datetime
 from fastapi.responses import JSONResponse
-from src.auth.dependencies import RefreshTokenBearer
+from src.auth.dependencies import RefreshTokenBearer, AccessTokenBearer
+from src.db.redis import add_jti_to_blocklist
 
 auth_router = APIRouter()
 user_service = UserService()
 
-REFRESH_TOKEN_EXPIRY = 2
+REFRESH_TOKEN_EXPIRY = 3
 
 # Bearer_Token
 
@@ -81,4 +82,19 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
             })
     
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='Invalid or expired token')
+
+
+@auth_router.get('/logout')
+async def revoke_token(token_details: dict = Depends(AccessTokenBearer())):
+    jti = token_details['jti']
+
+    await add_jti_to_blocklist(jti)
+    return JSONResponse(
+        content={
+            'message': 'logged out sucessfully',
+        },
+        status_code=status.HTTP_200_OK
+    )
+
+
 

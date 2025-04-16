@@ -49,3 +49,5 @@ in terminal python3
 import secrets
 >>> secrets.token_hex(16)
 
+pip install aioredis
+
