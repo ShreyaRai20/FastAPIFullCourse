@@ -51,3 +51,13 @@ import secrets
 
 pip install aioredis
 
+install redis 
+
+brew install redis
+brew services start redis
+brew services start redis
+
+
+
+
+

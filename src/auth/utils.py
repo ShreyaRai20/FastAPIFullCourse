@@ -4,6 +4,7 @@ import jwt
 from src.config import Config
 import uuid
 import logging
+import pytz
 
 password_context = CryptContext(
     schemes=['bcrypt']
@@ -20,7 +21,7 @@ def verify_password(password: str, hash: str) -> bool:
 def create_access_token(user_data: dict, expiry: timedelta = None, refresh: bool=False):
     payload = {}
     payload['user'] = user_data
-    payload['exp'] = datetime.now() + (expiry if expiry is not None else timedelta(hours=ACCESS_TOKEN_EXPIRY))
+    payload['exp'] = datetime.now(pytz.utc) + (expiry if expiry is not None else timedelta(hours=ACCESS_TOKEN_EXPIRY))
     payload['jti'] = str(uuid.uuid4())
     payload['refresh'] = refresh
     token = jwt.encode(

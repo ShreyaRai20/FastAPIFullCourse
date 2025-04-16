@@ -3,9 +3,10 @@ from src.config import Config
 
 JTI_EXPIRY = 3600
 
-token_blocklist = aioredis.StrictRedis(
-    host=Config.REDIS_HOST,
-    port=Config.REDIS_PORT,
+token_blocklist = aioredis.from_url(
+    # host=Config.REDIS_HOST,
+    # port=Config.REDIS_PORT,
+    f"redis://{Config.REDIS_HOST}:{Config.REDIS_PORT}",
     db=0
 )
 
