@@ -43,3 +43,9 @@ pip install bcrypt
 
 pip install pyjwt
 
+
+in terminal python3 
+
+import secrets
+>>> secrets.token_hex(16)
+
