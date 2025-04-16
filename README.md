@@ -61,3 +61,6 @@ brew services start redis
 
 
 
+
+
+ctrl + D
