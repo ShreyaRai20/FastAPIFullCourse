@@ -1,8 +1,10 @@
 # forms on frontend
-
+from src.reviews.schemas import ReviewModel
+from src.books.schemas import Book
 from pydantic import BaseModel, Field
 from datetime import datetime
 import uuid
+from typing import List
 
 class UserCreateModel(BaseModel):
     firstname: str = Field(max_length=25)
@@ -21,6 +23,10 @@ class UserModel(BaseModel):
     password_hash: str = Field(exclude=True)
     created_at: datetime 
     updated_at: datetime 
+
+class UserBooksModel(UserModel):
+    books: List[Book]
+    reviews: List[ReviewModel]
 
 class UserLoginModel(BaseModel):
     email: str = Field(max_length=40)

@@ -1,13 +1,18 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 from .schemas import BookCreateModel, BookUpdateModel
 from sqlmodel import select,desc
-from .models import Books
+from src.db.models import Books
 from datetime import datetime
 
 
 class BookService:
     async def get_all_books(self, session:AsyncSession):
         statement = select(Books).order_by(desc(Books.created_at))
+        result = await session.exec(statement)
+        return result.all()
+    
+    async def get_user_books(self, user_uid:str, session:AsyncSession):
+        statement = select(Books).where(Books.user_id == user_uid).order_by(desc(Books.created_at))
         result = await session.exec(statement)
         return result.all()
 
@@ -17,11 +22,12 @@ class BookService:
         book = result.first()
         return book if book is not None else None
 
-    async def create_book(self, book_data:BookCreateModel, session:AsyncSession):
+    async def create_book(self, book_data:BookCreateModel, user_uid:str, session:AsyncSession):
         book_data_dict = book_data.model_dump()
         new_book = Books(
             **book_data_dict # Unpack
         )
+        new_book.user_id=user_uid
         # new_book.published_date = datetime.strptime(book_data_dict['published_date'],'%Y-%m-%d')
         session.add(new_book)
         await session.commit()
