@@ -57,6 +57,11 @@ brew install redis
 brew services start redis
 brew services start redis
 
+pip install fastapi_mail
+
+pip install itsdangerous
+
+
 
 
 

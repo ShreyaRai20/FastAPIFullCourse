@@ -9,7 +9,7 @@ from src.config import Config
 async_engine = AsyncEngine(
     create_engine(
         url=Config.DATABASE_URL,
-        echo=True 
+        # echo=True 
     ))
 
 # Database connection with lifespan events 
