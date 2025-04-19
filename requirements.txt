@@ -69,8 +69,6 @@ Markdown==3.7
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
 mashumaro==2.9
-## !! Could not determine repository location
--e /Users/shreyarai/MCPServer
 mdurl==0.1.2
 minimal-snowplow-tracker==0.0.2
 ml_dtypes==0.5.1
