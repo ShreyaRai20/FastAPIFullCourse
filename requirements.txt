@@ -3,7 +3,6 @@ agate==1.6.3
 aioredis==2.0.1
 aiosmtplib==3.0.2
 alembic==1.15.2
-altgraph @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a857e00a32/Library/Caches/com.apple.xbs/Sources/python3/altgraph-0.17.2-py2.py3-none-any.whl
 annotated-types==0.7.0
 anyio==4.9.0
 asn1crypto==1.5.1
