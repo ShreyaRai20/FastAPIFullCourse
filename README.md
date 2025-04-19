@@ -62,10 +62,20 @@ pip install fastapi_mail
 pip install itsdangerous
 
 
+pip install celery
+
+pip install asgiref
+
+celery -A src.celery_tasks.c_app worker
+
+pip install flower
+
+celery -A src.celery_tasks.c_app flower
+
+pip install pytest
 
 
+pip install schemathesis
 
-
-
-
+st run http://localhost:8000/openapi.json --experimental=openapi-3.1
 ctrl + D

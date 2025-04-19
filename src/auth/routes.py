@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from .schemas import UserCreateModel, UserModel, UserLoginModel, UserBooksModel, EmailModel, PasswordResetRequestModel, PasswordResetConfirmModel
 from .service import UserService
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -13,6 +13,7 @@ from src.errors import UserAlreadyExists, UserNotFound, InvalidCredentials, Inva
 from src.mail import mail, create_message
 import asyncio
 from src.config import Config
+from src.celery_tasks import send_email
 
 auth_router = APIRouter()
 user_service = UserService()
@@ -26,13 +27,15 @@ REFRESH_TOKEN_EXPIRY = 3
 async def send_email(emails:EmailModel):
     emails = emails.addresses
     # email = ['shreya200199@gmail.com', 'anurai483@gmail.com']
+    subject = 'welcome to the app'
     html = '<h1>Hello Didi</h1>'
-    message = create_message(recipent=emails, subject='Welcome', body=html)
-    await mail.send_message(message)
+    send_email.delay(emails, subject, html)
+    # message = create_message(recipent=emails, subject='Welcome', body=html)
+    # await mail.send_message(message)
     return {'message':'Email send  sucessfully'}
 
 @auth_router.post('/signup', response_model=dict, status_code=status.HTTP_201_CREATED)
-async def create_user_account(user_data: UserCreateModel, session: AsyncSession = Depends(get_session)):
+async def create_user_account(user_data: UserCreateModel, bg_tasks:BackgroundTasks, session:AsyncSession=Depends(get_session)):
     email = user_data.email
     user_exists = await user_service.user_exist(email, session)
     if user_exists:
@@ -41,8 +44,13 @@ async def create_user_account(user_data: UserCreateModel, session: AsyncSession 
     token = create_url_safe_token({"email":email})
     link = f'http://{Config.DOMAIN}/api/v1/auth/verify/{token}'
     html_message = f'<h1>Verify your email</h1> <p>Please click this <a href="{link}">link</a> below<p> '
-    message = create_message(recipent=[email], subject='verify your email', body=html_message)
-    await mail.send_message(message)
+    emails = [email]
+    subject = 'verify your email'
+    send_email.delay(emails,subject,html_message)
+
+    # message = create_message(recipent=[email], subject='verify your email', body=html_message)
+    # bg_tasks.add_task(mail.send_message,message)
+    # await mail.send_message(message)
     # try:
     #     email_data = EmailModel(addresses=[new_user.email])  # create EmailModel instance
     #     await send_email(email_data)
